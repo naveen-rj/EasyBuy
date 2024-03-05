@@ -371,6 +371,13 @@ td img{
     width: 100%;
     max-width: 400px;
 }
+.total-price button{
+    background-color: #ff523b;
+    border: none;
+    color: white;
+    padding: 5px;
+    width: 100%;
+}
 td:last-child{
     text-align: right;
 }
