@@ -92,6 +92,7 @@ p{
     padding-left: 25px;
     padding-right: 25px;
 }
+
 .col-4{
     flex-basis: 25%;
     padding: 10px;
@@ -253,7 +254,8 @@ ul{
 
 /* All Products */
 .product-item {
-    height: 400px; 
+    max-height: 400px;
+    height: 100%; 
 }  
 
 .product-item h4 {
@@ -502,7 +504,7 @@ form a{
     .row{
         text-align: center;
     }
-    .col-2, .col-3, .col-4{
+    .col-2, .col-3{
         flex-basis: 100%;
     }
     .single-product .row{
@@ -518,4 +520,7 @@ form a{
     .cart-info p{
         display: none;
     }
+
 }
+
+ 
