@@ -18,25 +18,46 @@
                             <span onclick="login()">Login</span>
                             <span onclick="register()">Register</span>
                             <hr id="Indicator">
+                            
                         </div>
-                        <form id="LoginForm">
-                            <input type="text" placeholder="Username">
-                            <input type="password" placeholder="Password">
-                            <button type="submit" class="btn">Login</button>
+                        
+                        <!-- Error message -->
+                        {% if messages %}
+                            <div class="messages">
+                                {% for message in messages %}
+                                    <p class="{{message.tags}}">{{ message }}</p>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="messages">
+                                <p>Already have an account? <button class="login-btn" onclick="login()">Login</button></p>
+                            </div>
+                        {% endif %}
+
+                        <form id="LoginForm" method='post' enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <input type="text" name="username" placeholder="Username">
+                            <input type="password" name="password" placeholder="Password">
+                            <button type="submit" name="login" class="btn">Login</button>
                             <a href="">Forget Password</a>
                         </form>
 
-                        <form id="RegForm">
-                            <input type="text" placeholder="Username">
-                            <input type="email" placeholder="Email">
-                            <input type="password" placeholder="Password">
-                            <button type="submit" class="btn">Register</button>
+                        <form id="RegForm" method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <input type="text" name="username" placeholder="Username" minlength="3" required title="Please enter minimum 3 characters">
+                            <input type="email" name="email" placeholder="Email"  required>
+                            <input type="tel" name="mobile" placeholder="Mobile" pattern="[0-9]{10}" required title="Please enter a 10-digit mobile number">
+                            <input type="password" name="address" placeholder="Address">
+                            <input type="password" name="password" id="password" placeholder="Password" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])\S{8,}$" required title="Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one digit, and one special character (@!# etc..). No spaces allowed.">
+                            <input type="password" name="confirmPassword" id="confirmPassword" placeholder="Confirm Password" required>
+                            <button type="submit" name="register" class="btn">Register</button>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
 {% endblock content %}
 
 {% block script %}
@@ -57,7 +78,25 @@
                 Indicator.style.transform = "translate(0px)";
     
             }
+
+            // Password Confirmation
+            var password = document.getElementById("password");
+            var confirmPassword = document.getElementById("confirmPassword");
+            confirmPassword.onchange = function() {
+                if (password.value!= confirmPassword.value) {
+                    confirmPassword.setCustomValidity("Passwords Don't Match");
+                } else {
+                    confirmPassword.setCustomValidity('');
+                }
+            }
         </script>
+
+        {% if login %}
+            <script>
+                login()
+            </script>
+        {% endif %}
+
 {% endblock script %}
 
 

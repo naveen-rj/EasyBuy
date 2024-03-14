@@ -16,30 +16,30 @@
             
         </div>
         
-        {% for product_chunk in products|chunks:4 %}
+        {% comment %} {% for product_chunk in products|chunks:4 %} {% endcomment %}
         <div class="row">
-            {% for product in product_chunk %}
-            <div class="col-4 product-item">
-                <a href={% url "product_details" product.id %}><img src="{{ product.image.url }}"></a>
-                <h4>{{ product.title }}</h4>
-                <div class="rating">
-                    <i class="fa fa-star"></i>
-                    <i class="fa fa-star"></i>
-                    <i class="fa fa-star"></i>
-                    <i class="fa fa-star"></i>
-                    <i class="fa fa-star-o"></i>
+            {% for product in products %}
+                <div class="col-4 product-item">
+                    <a href={% url "product_details" product.id %}><img src="{{ product.image.url }}"></a>
+                    <h4>{{ product.title }}</h4>
+                    <div class="rating">
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star-o"></i>
+                    </div>
+                    <p>₹{{ product.price }}</p>
                 </div>
-                <p>₹{{ product.price }}</p>
-            </div>
             {% endfor %}
         </div>
-        {% endfor %}
+        {% comment %} {% endfor %} {% endcomment %}
 
         <div class="page-btn">
             Page {{ products.number }} of {{ products.paginator.num_pages }}.
             
             {% if products.has_previous %}
-            <a href="?page={{products.previous_page_number}}"><span>&#8592;</span></a>
+                <a href="?page={{products.previous_page_number}}"><span>&#8592;</span></a>
             {% endif %}
 
             {% if products.number > 3 %}
@@ -64,7 +64,7 @@
             {% endif %}
 
             {% if products.has_next %}
-            <a href="?page={{products.next_page_number}}"><span>&#8594;</span></a>
+                <a href="?page={{products.next_page_number}}"><span>&#8594;</span></a>
             {% endif %}
             
         </div>
