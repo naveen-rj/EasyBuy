@@ -1,83 +1,100 @@
 {% extends "base.html" %}
 
 {% load static %}
+{% load add %}
+{% load multiply %}
+{% load get_total %}
 
 {% block title %}Cart | EasyBuy{% endblock title %}
 
 {% block content %}
     <!-- Cart items details -->
     <div class="small-container cart-page">
-        <table>
-            <tr>
-                <th>Product</th>
-                <th>Quantity</th>
-                <th>Subtotal</th>
-            </tr>
-            <tr>
-                <td>
-                    <div class="cart-info">
-                        <img src={% static "images/buy-1.jpg" %}>
-                        <div>
-                            <p>Red Printed T-Shirt</p>
-                            <small>Price: $50.00</small>
-                            <br>
-                            <a href="">Remove</a>
-                        </div>
-                    </div>
-                </td>
-                <td><input type="number" value="1"></td>
-                <td>$50.00</td>
-            </tr>
-            <tr>
-                <td>
-                    <div class="cart-info">
-                        <img src={% static "images/buy-2.jpg" %}>
-                        <div>
-                            <p>Red Printed T-Shirt</p>
-                            <small>Price: $50.00</small>
-                            <br>
-                            <a href="">Remove</a>
-                        </div>
-                    </div>
-                </td>
-                <td><input type="number" value="1"></td>
-                <td>$50.00</td>
-            </tr>
-            <tr>
-                <td>
-                    <div class="cart-info">
-                        <img src={% static "images/buy-3.jpg" %}>
-                        <div>
-                            <p>Red Printed T-Shirt</p>
-                            <small>Price: $50.00</small>
-                            <br>
-                            <a href="">Remove</a>
-                        </div>
-                    </div>
-                </td>
-                <td><input type="number" value="1"></td>
-                <td>$50.00</td>
-            </tr>
-        </table>
-        <div class="total-price">
+        {% if messages %}
+            {% for message in messages %}
+                <div style="text-align:center">
+                    <h3 class={{ message.tags }}>{{ message }}</h3>
+                    {% if message.tags == 'success' %}
+                        <img src="{% static 'images/order_confirmation.jpeg' %}" style="width:25%; height:auto;">
+                    {% endif %}
+                </div>
+            {% endfor %}
+        
+        {% elif cart_items %}
             <table>
                 <tr>
-                    <td>Subtotal</td>
-                    <td>$200.00</td>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Subtotal</th>
                 </tr>
-                <tr>
-                    <td>Tax</td>
-                    <td>$35.00</td>
-                </tr>
-                <tr>
-                    <td>Total</td>
-                    <td>$230.00</td>
-                </tr>
-                <tr>
-                    <td colspan="2"><button>Confirm Order</button></td>
-                </tr>
+                {% for cart_item in cart_items %}
+                    <tr>
+                        <td>
+                            <div class="cart-info">
+                                <a href="{% url 'product_details' cart_item.product.id %}"><img src="{{ cart_item.product.image.url }}"></a>
+                                <div>
+                                    <p><a class="text-decoration-a" href="{% url 'product_details' cart_item.product.id %}">{{ cart_item.product.title }}</a></p>
+                                    <small>Size: {{ cart_item.size }}</small><br>
+                                    <small>Price: ₹{{ cart_item.product.price }}</small>
+                                    <br>
+                                    <a class="td-a" href="{% url 'remove_from_cart' cart_item.id %}">Remove</a>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <form action="{% url "update_quantity" %}" method="post" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <div class="quantity-controls">
+                                    <input type="hidden" name="cart_item_id" value="{{ cart_item.id }}">
+                                    <button type="submit" name="change" value="-1">-</button>
+                                    <input type="text" readonly name="quantity" value="{{ cart_item.quantity }}">
+                                    <button type="submit" name="change" value="1">+</button>
+                                </div>
+                            </form>
+                        </td>
+                        {% multiply cart_item.product.price cart_item.quantity as subtotal %}
+                        <td>₹{{ subtotal }}</td>
+                    </tr>
+                {% endfor %}
             </table>
-        </div>
+            <div class="total-price">
+                <table>
+                    <tr>
+                        <td>Subtotal</td>
+                        {% get_total cart_items as total %}
+                        <td>₹{{ total }}</td>
+                    </tr>
+                    <tr>
+                        
+                        {% if total <= 2000 %}
+                            {% add total 99 as total_amount %}
+                            <td>Delivery Fee <br>(Free delivery above ₹2000)</td>
+                            <td>₹99.00</td>
+                        {% else %}
+                            {% add total 0 as total_amount %}
+                            <td>Delivery Fee</td>
+                            <td style="color: #00b259;">FREE&nbsp;&nbsp;<span style="color: #b5b5b5; text-decoration: line-through;">₹99</span></td>
+                        {% endif %}    
+                    </tr>
+                    <tr>
+                        <td>Total Amount</td>
+                        <td><b>₹{{ total_amount }}</b></td>  
+                    </tr>
+                    <tr>
+                        <form action="{% url 'checkout' %}" method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <input type="hidden" name="total_amount" value="{{ total_amount }}">
+                            <td colspan="2"><button class="btn" type="submit"><h3>Confirm Order</h3></button></td>
+                        </form>
+                    </tr>
+                </table>
+            </div>
+        {% else %}
+            <div style="text-align:center">
+                <h3>Your Cart is Empty!</h3>
+                <img src="{% static 'images/empty_cart.png' %}" style="width:50%; height:auto;">
+            </div>
+        {% endif %}
     </div>
 
 {% endblock content %}

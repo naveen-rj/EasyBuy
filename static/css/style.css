@@ -67,6 +67,7 @@ p{
     margin: 30px 0;
     border-radius: 30px;
     transition: background 0.5s;
+    cursor: pointer;
 }
 .login-btn{
     display: inline-block;
@@ -100,6 +101,7 @@ p{
     padding-left: 25px;
     padding-right: 25px;
 }
+
 
 .col-4{
     flex-basis: 25%;
@@ -361,8 +363,8 @@ table{
 }
 .cart-info{
     display: flex;
-    flex-wrap: wrap;
 }
+
 th{
     text-align: left;
     padding: 5px;
@@ -378,7 +380,12 @@ td input{
     height: 30px;
     padding: 5px;
 }
-td a{
+
+.text-decoration-a:hover{
+    text-decoration: none;
+}
+
+.td-a{
     color: #ff523b;
     font-size: 12px;
 }
@@ -410,6 +417,22 @@ th:last-child{
     text-align: right;
 }
 
+.quantity-controls{
+    display: flex;
+    align-items: center;
+}
+
+.quantity-controls input{
+    text-align: center;
+    width: 30px;
+    height: auto;
+    padding: 5px;
+}
+
+.quantity-controls button{
+    margin: 0 5px;
+    padding: 5px;
+}
 /* Messages section */
 .success {
     color: green;
@@ -546,9 +569,10 @@ form a{
         font-size: 26px;
         line-height: 32px;
     }
-    .cart-info p{
-        display: none;
+    .cart-info {
+        flex-direction: column;
     }
+    
 
 }
 
