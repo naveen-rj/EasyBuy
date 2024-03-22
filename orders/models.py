@@ -1,6 +1,7 @@
 from django.db import models
 from customers.models import Customer
 from products.models import Product
+from django.utils import timezone
 
 # Model for Orders
 class Order(models.Model):
@@ -17,12 +18,32 @@ class Order(models.Model):
                       (ORDER_PROCESSED,'ORDER_PROCESSED'),
                       (ORDER_DELIVERED,'ORDER_DELIVERED'),
                       (ORDER_CANCELLED,'ORDER_CANCELLED'))
-    owner = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True, related_name='orders')
+    owner = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True, related_name='orders', editable=False)
     total_amount = models.FloatField(null=True)
     order_status = models.IntegerField(choices=STATUS_CHOICES, default=CART_STAGE)
     delete_status = models.IntegerField(choices=DELETE_CHOICES, default=LIVE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    # Timestamps for status updates
+    confirmed_at = models.DateTimeField(null=True, blank=True)
+    processed_at = models.DateTimeField(null=True, blank=True)
+    delivered_at = models.DateTimeField(null=True, blank=True)
+    cancelled_at = models.DateTimeField(null=True, blank=True)
+
+    def set_status(self, status):
+        
+        if status == Order.ORDER_CONFIRMED and self.confirmed_at is None:
+            self.confirmed_at = timezone.now()
+        elif status == Order.ORDER_PROCESSED and self.processed_at is None:
+            self.processed_at = timezone.now()
+        elif status == Order.ORDER_DELIVERED and self.delivered_at is None:
+            self.delivered_at = timezone.now()
+        elif status == Order.ORDER_CANCELLED and self.cancelled_at is None:
+            self.cancelled_at = timezone.now()
+        
+        self.order_status = status
+        self.save()
 
     def __str__(self) -> str:
         return "OrderId: {} | Customer: {}".format(self.id, self.owner.name)
@@ -37,5 +58,5 @@ class OrderItem(models.Model):
     total_price = models.FloatField(null=True)
 
     def __str__(self) -> str:
-        return "Order Item: {} | OrderId: {} | Customer: {}".format(self.product.title, self.order.id, self.order.owner)
+        return "Order Item: {} | Qty: {} | OrderId: {} | Customer: {}".format(self.product.title, self.quantity, self.order.id, self.order.owner)
     

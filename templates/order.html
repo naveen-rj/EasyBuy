@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% load get_total %}
+{% load get_status %}
+
+
+{% block title %}Order View | EasyBuy{% endblock title %}
+
+{% block content %}
+    <!-- Cart items details -->
+    <div class="small-container order-page">
+        
+            <table>
+                <tr>
+                    <th>Order Items</th>
+                    <th>Quantity</th>
+                    <th>Product Total</th>
+                </tr>
+                {% for item in order_items %}
+                    <tr>
+                        <td>
+                            <div class="order-info">
+                                <a href="{% url 'product_details' item.product.id %}"><img src="{{ item.product.image.url }}"></a>
+                                <div>
+                                    <p><a class="text-decoration-a" href="{% url 'product_details' item.product.id %}">{{ item.product.title }}</a></p>
+                                    <small>Size: {{ item.size }}</small><br>
+                                    <small>Price: ₹{{ item.product.price }}</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td><input type="text" readonly name="quantity" value="{{ item.quantity }}">
+                        </td>
+                        <td>₹{{ item.total_price }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+            <div class="total-price">
+                <table>
+                    <tr>
+                        <td>Order ID</td>
+                        <td>{{ order.id }}</td>
+                    </tr>
+                    <tr>
+                        <td>Order Date</td>
+                        <td>{{ order.confirmed_at|date }}</td>
+                    </tr
+                    <tr>
+                        <td>Subtotal</td>
+                        {% get_total order_items as total %}
+                        <td>₹{{ total }}</td>
+                    </tr>
+                    <tr>
+                        <td>Delivery Fee</td>
+                        {% if total <= 2000 %}
+                            <td>₹99.00</td>
+                        {% else %}
+                            <td style="color: #00b259;">FREE&nbsp;&nbsp;<span style="color: #b5b5b5; text-decoration: line-through;">₹99</span></td>
+                        {% endif %}    
+                    </tr>
+                    <tr>
+                        <td>Total Amount</td>
+                        <td><b>₹{{ order.total_amount }}</b></td>  
+                    </tr>
+                    <tr>
+                        <td>Status</td>
+                        <td>{% get_status order.order_status %}</td>
+                    </tr>  
+                </table>
+            </div>
+            
+        
+    </div>
+
+{% endblock content %}
+

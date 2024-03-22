@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from . models import Product
+from orders.models import Order, OrderItem
 from django.core.paginator import Paginator
 
 # Create your views here.
@@ -31,6 +32,13 @@ def products(request):
 def product_details(request, pk):
     
     product = Product.objects.get(pk=pk)
+    size = request.GET.get('size')
+    quantity = request.GET.get('quantity')
     related_products = Product.objects.exclude(pk=pk)[:4]
+
+    context = {'product': product, 
+               'related_products': related_products, 
+               'size': size, 
+               'quantity': quantity}
     
-    return render(request, 'product_details.html', {'product': product, 'related_products': related_products})
+    return render(request, 'product_details.html', context)

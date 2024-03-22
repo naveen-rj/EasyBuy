@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% load get_status %}
+
+
+{% block title %}Orders | EasyBuy{% endblock title %}
+
+{% block content %}
+    <!-- Cart items details -->
+    <div class="small-container order-page">
+        
+        {% if orders %}
+            <table>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Items</th>
+                    <th>Date</th>
+                    <th>Total Amount</th>
+                    <th>Order Status</th>
+                </tr>
+                {% for order in orders %}
+                    <tr>
+                        <td><a href="{% url "order" order.id %}">{{ order.id }}</a></td>
+                        <td>{% for item in order.order_items.all %}
+                            {{ item.product.title }} | Size: {{ item.size }} | Qty: {{ item.quantity }}
+                            <br>
+                            {% endfor %}
+                        </td>
+                        <td>{{ order.confirmed_at|date }}</td>
+                        <td>₹{{ order.total_amount }}</td>
+                        <td>{% get_status order.order_status %}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+            
+        {% else %}
+            <div style="text-align:center">
+                <img src="{% static 'images/no_orders.jpeg' %}" style="width:50%; height:auto; border-radius: 25%;">
+            </div>
+        {% endif %}
+    </div>
+
+{% endblock content %}
+

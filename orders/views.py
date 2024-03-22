@@ -13,7 +13,7 @@ def show_cart(request):
     cart_items = OrderItem.objects.filter(order__owner=customer, order__order_status=Order.CART_STAGE).order_by('id')
     return render(request, 'cart.html', {'cart_items': cart_items})
 
-
+@login_required(login_url='account')
 def add_to_cart(request):
     if request.POST:
         # Retrieve user and customer
@@ -29,7 +29,7 @@ def add_to_cart(request):
         # Retrieve product and quantity from POST data
         product_id = request.POST['product_id']
         product = get_object_or_404(Product, pk=product_id)
-        quantity = int(request.POST.get('quantity', 1))  # Default quantity is 1
+        quantity = int(request.POST.get('quantity'))  
         size = request.POST.get('size')
 
         # Retrieve or create the order item
@@ -40,7 +40,7 @@ def add_to_cart(request):
         )
 
         # Update quantity and apply maximum limit
-        order_item.quantity += quantity
+        order_item.quantity = quantity
         order_item.quantity = min(order_item.quantity, 5)  # Apply maximum limit
         order_item.save()
 
@@ -78,7 +78,7 @@ def checkout(request):
             order_status=Order.CART_STAGE
         )
         if order:
-            order.order_status = Order.ORDER_CONFIRMED
+            order.set_status(Order.ORDER_CONFIRMED)
             order.total_amount = request.POST.get('total_amount')
             order.save()
 
@@ -91,3 +91,16 @@ def checkout(request):
             messages.success(request, 'Your order has been confirmed! Will be processed soon.')
 
     return redirect('cart')
+
+
+def orders(request):
+    user = request.user
+    customer = user.customer
+    orders = Order.objects.filter(owner=customer).exclude(order_status=Order.CART_STAGE).order_by('-id')
+    return render(request, 'orders.html', {'orders': orders})
+
+
+def order_view(request, pk):
+    order = get_object_or_404(Order, pk=pk)
+    order_items = OrderItem.objects.filter(order=order)
+    return render(request, 'order.html', {'order': order, 'order_items': order_items})

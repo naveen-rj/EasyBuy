@@ -31,9 +31,9 @@
                     <tr>
                         <td>
                             <div class="cart-info">
-                                <a href="{% url 'product_details' cart_item.product.id %}"><img src="{{ cart_item.product.image.url }}"></a>
+                                <a href="{% url 'product_details' cart_item.product.id %}?size={{ cart_item.size }}&quantity={{ cart_item.quantity }}"><img src="{{ cart_item.product.image.url }}"></a>
                                 <div>
-                                    <p><a class="text-decoration-a" href="{% url 'product_details' cart_item.product.id %}">{{ cart_item.product.title }}</a></p>
+                                    <p><a class="text-decoration-a" href="{% url 'product_details' cart_item.product.id %}?size={{ cart_item.size }}&quantity={{ cart_item.quantity }}">{{ cart_item.product.title }}</a></p>
                                     <small>Size: {{ cart_item.size }}</small><br>
                                     <small>Price: ₹{{ cart_item.product.price }}</small>
                                     <br>

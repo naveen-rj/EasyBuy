@@ -365,6 +365,10 @@ table{
     display: flex;
 }
 
+.order-info{
+    display: flex;
+}
+
 th{
     text-align: left;
     padding: 5px;
@@ -433,6 +437,19 @@ th:last-child{
     margin: 0 5px;
     padding: 5px;
 }
+
+/* Order Items */
+.order-page{
+    margin: 80px auto;
+}
+.order-page td{
+    padding: 10px 5px;
+    border-bottom: 1px solid #ddd;
+}
+tbody tr:last-child td {
+    border-bottom: none; /* Remove border from last row */
+}
+
 /* Messages section */
 .success {
     color: green;
@@ -570,6 +587,9 @@ form a{
         line-height: 32px;
     }
     .cart-info {
+        flex-direction: column;
+    }
+    .order-info {
         flex-direction: column;
     }
     
